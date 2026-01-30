@@ -1,41 +1,87 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Invoice</title>
-<link rel="stylesheet" href="css/invoice.css">
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-</head>
-<body>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
 
-<div class="invoice-container">  
-<h2>Sayfullah</h2>
-<p>Jl. Murung Selong RT 12 No. 04 Sungai Lulut Banjarmasin Timur<br>WA 082152412854</p>
+.invoice {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+}
 
-<h3 id="custName"></h3>
-<p id="custWa"></p>
+header {
+  background: linear-gradient(135deg,#000,#222);
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
 
-<table>
-<thead>
-<tr>
-<th>No</th><th>Tanggal</th><th>Item</th><th>Qty</th><th>Harga</th><th>Jumlah</th><th>Aksi</th>
-</tr>
-</thead>
-<tbody id="items"></tbody>
-</table>
+h1 {
+  margin: 0;
+  font-size: 28px;
+}
 
-<h3 id="summary"></h3>
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
 
-<h4>Pembayaran</h4>
-<div id="payments"></div>
+th {
+  background: #111;
+  color: white;
+  padding: 10px;
+}
 
-<button onclick="history.back()">Kembali</button>
-<button onclick="addItem()">Tambah Item</button>
-<button onclick="addPayment()">Bayar</button>
-<button onclick="sendWA()">Kirim WhatsApp (PNG)</button>
+td {
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
 
-</div>
+.total {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
 
-<script type="module" src="js/invoice.js"></script>
-</body>
-</html>
+button {
+  background: #111;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button.danger {
+  background: #c0392b;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.no-print { }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
