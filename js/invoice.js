@@ -78,12 +78,20 @@ window.deletePayment=async(pid)=>{
 };
 
 window.sendWA = async ()=>{
-  const canvas = await html2canvas(document.getElementById("invoice"),{scale:2});
+  const wa = snap.data().wa.replace(/^0/, "62");
+
+  // 1. buka WA langsung dari klik user (tidak diblok)
+  window.open(`https://wa.me/${wa}?text=Invoice%20Sayfullah`, "_blank");
+
+  // 2. baru generate PNG
+  const canvas = await html2canvas(document.getElementById("invoice"), { scale: 2 });
   const img = canvas.toDataURL("image/png");
-  const link=document.createElement("a");
-  link.href=img;
-  link.download="invoice.png";
+
+  // 3. auto download PNG
+  const link = document.createElement("a");
+  link.href = img;
+  link.download = "invoice.png";
+  document.body.appendChild(link);
   link.click();
-  const wa=snap.data().wa.replace(/^0/,"62");
-  setTimeout(()=>window.open(`https://wa.me/${wa}?text=Invoice%20Sayfullah`),800);
+  document.body.removeChild(link);
 };
