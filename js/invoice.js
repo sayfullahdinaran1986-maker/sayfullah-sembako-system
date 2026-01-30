@@ -1,17 +1,15 @@
 import { db } from "./firebase.js";
-import {
-  doc,
-  getDoc,
-  collection,
-  addDoc,
-  deleteDoc,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { doc, getDoc, collection, addDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const id = new URLSearchParams(location.search).get("id");
-const ref = doc(db, "customers", id);
+const ref = doc(db,"customers",id);
 
-// Load customer
+const custName = document.getElementById("custName");
+const custWa = document.getElementById("custWa");
+const items = document.getElementById("items");
+const payments = document.getElementById("payments");
+const summary = document.getElementById("summary");
+
 const snap = await getDoc(ref);
 custName.innerText = snap.data().name;
 custWa.innerText = snap.data().wa;
@@ -19,109 +17,78 @@ custWa.innerText = snap.data().wa;
 let total = 0;
 let paid = 0;
 
-// ================== PURCHASES ==================
-onSnapshot(collection(ref, "purchases"), (s) => {
-  items.innerHTML = "";
-  total = 0;
-  let i = 1;
-
-  s.forEach((d) => {
-    const x = d.data();
-    total += x.total;
-
-    let date = x.date;
-    if (x.date?.seconds) {
-      date = new Date(x.date.seconds * 1000).toLocaleDateString();
-    }
-
-    items.innerHTML += `
-      <tr>
-        <td>${i++}</td>
-        <td>${date}</td>
-        <td>${x.item}</td>
-        <td>${x.qty}</td>
-        <td>${x.price.toLocaleString()}</td>
-        <td>${x.total.toLocaleString()}</td>
-        <td>
-          <button onclick="deleteItem('${d.id}')">❌</button>
-        </td>
-      </tr>
-    `;
+onSnapshot(collection(ref,"purchases"),s=>{
+  items.innerHTML="";
+  total=0;
+  let i=1;
+  s.forEach(d=>{
+    const x=d.data();
+    total+=x.total;
+    const date = x.date?.toDate().toLocaleDateString() || "-";
+    items.innerHTML+=`
+    <tr>
+      <td>${i++}</td>
+      <td>${date}</td>
+      <td>${x.item}</td>
+      <td>${x.qty}</td>
+      <td>${x.price.toLocaleString()}</td>
+      <td>${x.total.toLocaleString()}</td>
+      <td class="no-print">
+        <button class="danger" onclick="delItem('${d.id}')">X</button>
+      </td>
+    </tr>`;
   });
-
   render();
 });
 
-// ================== PAYMENTS ==================
-onSnapshot(collection(ref, "payments"), (s) => {
-  payments.innerHTML = "";
-  paid = 0;
-
-  s.forEach((d) => {
-    const x = d.data();
-    paid += x.amount;
-
-    let date = x.date;
-    if (x.date?.seconds) {
-      date = new Date(x.date.seconds * 1000).toLocaleDateString();
-    }
-
-    payments.innerHTML += `
-      ${date} - Rp ${x.amount.toLocaleString()}
-      <button onclick="deletePayment('${d.id}')">❌</button><br>
-    `;
+onSnapshot(collection(ref,"payments"),s=>{
+  payments.innerHTML="";
+  paid=0;
+  s.forEach(d=>{
+    const x=d.data();
+    paid+=x.amount;
+    const date=x.date.toDate().toLocaleDateString();
+    payments.innerHTML+=`
+      <div class="payment-row">
+        ${date} - Rp ${x.amount.toLocaleString()}
+        <button class="danger" onclick="delPay('${d.id}')">X</button>
+      </div>`;
   });
-
   render();
 });
 
-// ================== RENDER ==================
-function render() {
-  summary.innerText = `Total: Rp ${total.toLocaleString()} | Sisa: Rp ${(total - paid).toLocaleString()}`;
+function render(){
+  summary.innerText = `Total: Rp ${total.toLocaleString()} | Sisa: Rp ${(total-paid).toLocaleString()}`;
 }
 
-// ================== ADD ITEM ==================
-window.addItem = async () => {
-  const item = prompt("Nama Item");
-  const qty = Number(prompt("Qty"));
-  const price = Number(prompt("Harga"));
-
-  if (!item || !qty || !price) return alert("Data tidak lengkap");
-
-  await addDoc(collection(ref, "purchases"), {
-    item,
-    qty,
-    price,
-    total: qty * price,
-    date: new Date()
+window.addItem = async()=>{
+  const item=prompt("Item");
+  const qty=Number(prompt("Qty"));
+  const price=Number(prompt("Harga"));
+  await addDoc(collection(ref,"purchases"),{
+    item,qty,price,total:qty*price,date:new Date()
   });
-};
+}
 
-// ================== ADD PAYMENT ==================
-window.addPayment = async () => {
-  const amt = Number(prompt("Nominal bayar"));
-  if (!amt) return;
-
-  await addDoc(collection(ref, "payments"), {
-    amount: amt,
-    date: new Date()
+window.addPayment = async()=>{
+  const amt=Number(prompt("Bayar"));
+  await addDoc(collection(ref,"payments"),{
+    amount:amt,date:new Date()
   });
-};
+}
 
-// ================== DELETE ==================
-window.deleteItem = async (id) => {
-  if (!confirm("Hapus item ini?")) return;
-  await deleteDoc(doc(ref, "purchases", id));
-};
+window.delItem = async(id2)=>{
+  await deleteDoc(doc(ref,"purchases",id2));
+}
 
-window.deletePayment = async (id) => {
-  if (!confirm("Hapus pembayaran ini?")) return;
-  await deleteDoc(doc(ref, "payments", id));
-};
+window.delPay = async(id2)=>{
+  await deleteDoc(doc(ref,"payments",id2));
+}
 
-// ================== WHATSAPP ==================
-window.sendWA = () => {
-  const wa = custWa.innerText.replace(/^0/, "62");
-  const msg = encodeURIComponent(`Halo ${custName.innerText}, ini invoice dari Sayfullah. Total Rp ${total.toLocaleString()}, Sisa Rp ${(total-paid).toLocaleString()}`);
-  window.open(`https://wa.me/${wa}?text=${msg}`, "_blank");
-};
+window.sendWA = async()=>{
+  const blob = await html2canvas(document.getElementById("invoice")).then(c=>c.toBlob());
+  const file = new File([blob],"invoice.png",{type:"image/png"});
+  const wa = snap.data().wa.replace(/^0/,"62");
+  const url = URL.createObjectURL(file);
+  window.open(`https://wa.me/${wa}?text=Invoice%20Anda:%20${location.href}`);
+}
