@@ -1,0 +1,135 @@
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+}
+
+.invoice-container {
+  max-width: 920px;
+  margin: 40px auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #111, #222);
+  color: white;
+  padding: 32px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.header small {
+  display: block;
+  opacity: 0.8;
+  margin-top: 6px;
+}
+
+.customer {
+  padding: 24px 32px;
+  border-bottom: 1px solid #eee;
+}
+
+.customer h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.customer span {
+  color: #555;
+}
+
+.table-wrap {
+  padding: 0 32px 24px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #f7f7f7;
+  text-align: left;
+  font-weight: 600;
+  padding: 12px;
+  font-size: 13px;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover {
+  background: #fafafa;
+}
+
+.actions button {
+  border: none;
+  background: #ff4d4d;
+  color: white;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.summary {
+  padding: 24px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+
+.summary span {
+  color: #444;
+}
+
+.payments {
+  padding: 0 32px 24px;
+}
+
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ddd;
+}
+
+.footer-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 24px 32px 32px;
+}
+
+.footer-buttons button {
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-back { background: #eee; }
+.btn-add { background: #111; color: white; }
+.btn-pay { background: #555; color: white; }
+.btn-wa { background: #25d366; color: white; }
+
+@media print {
+  .footer-buttons,
+  .actions {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}
