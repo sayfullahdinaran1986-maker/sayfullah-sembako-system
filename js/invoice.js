@@ -77,4 +77,13 @@ window.deletePayment=async(pid)=>{
  if(confirm("Hapus pembayaran?")) await deleteDoc(doc(db,"customers",id,"payments",pid));
 };
 
-window.download=()=>{html2pdf().from(document.getElementById("invoice")).save();}
+window.sendWA = async ()=>{
+  const canvas = await html2canvas(document.getElementById("invoice"),{scale:2});
+  const img = canvas.toDataURL("image/png");
+  const link=document.createElement("a");
+  link.href=img;
+  link.download="invoice.png";
+  link.click();
+  const wa=snap.data().wa.replace(/^0/,"62");
+  setTimeout(()=>window.open(`https://wa.me/${wa}?text=Invoice%20Sayfullah`),800);
+};
