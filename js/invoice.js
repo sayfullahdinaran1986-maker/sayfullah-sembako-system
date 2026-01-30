@@ -1,57 +1,88 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8" />
-<title>Invoice</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="stylesheet" href="css/style.css"/>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-</head>
-<body>
+import { db } from "./firebase.js";
+import { doc, getDoc, collection, addDoc, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<div class="invoice-wrapper" id="invoiceArea">
-  <div class="invoice">
-    <div class="header">
-      <h1>Sayfullah</h1>
-      <p>Jl. Murung Selong RT 12 No. 04 Sungai Lulut, Banjarmasin Timur</p>
-      <p>WA: 082152412854</p>
-    </div>
+const id = new URLSearchParams(location.search).get("id");
+const ref = doc(db,"customers",id);
 
-    <div class="customer">
-      <strong id="custName"></strong><br>
-      <span id="custWa"></span>
-    </div>
+const snap = await getDoc(ref);
+custName.innerText = snap.data().name;
+custWa.innerText = snap.data().wa;
 
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Tgl</th>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Harga</th>
-          <th>Jumlah</th>
-          <th class="no-print">Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="items"></tbody>
-    </table>
+let total = 0;
+let paid = 0;
 
-    <div class="summary" id="summary"></div>
+onSnapshot(collection(ref,"purchases"), s=>{
+  items.innerHTML="";
+  total=0;
+  let i=1;
+  s.forEach(d=>{
+    const x=d.data();
+    total += x.total;
+    items.innerHTML+=`
+    <tr>
+      <td>${i++}</td>
+      <td>${x.date.toDate().toLocaleDateString()}</td>
+      <td>${x.item}</td>
+      <td>${x.qty}</td>
+      <td>Rp ${x.price.toLocaleString()}</td>
+      <td>Rp ${x.total.toLocaleString()}</td>
+      <td class="no-print">
+        <button onclick="editItem('${d.id}',${x.qty},${x.price},'${x.item}')">✏️</button>
+        <button onclick="deleteItem('${d.id}')">🗑</button>
+      </td>
+    </tr>`;
+  });
+  render();
+});
 
-    <h3>Pembayaran</h3>
-    <div id="payments"></div>
-  </div>
-</div>
+onSnapshot(collection(ref,"payments"), s=>{
+  payments.innerHTML="";
+  paid=0;
+  s.forEach(d=>{
+    const x=d.data();
+    paid+=x.amount;
+    payments.innerHTML+=`${x.date.toDate().toLocaleDateString()} - Rp ${x.amount.toLocaleString()}<br>`;
+  });
+  render();
+});
 
-<div class="bottom-bar no-print">
-  <button onclick="history.back()">Kembali</button>
-  <button onclick="addItem()">Tambah Item</button>
-  <button onclick="addPayment()">Bayar</button>
-  <button onclick="sendWhatsApp()">WhatsApp</button>
-  <button onclick="window.print()">PDF</button>
-</div>
+function render(){
+  summary.innerText = `Total: Rp ${total.toLocaleString()} | Sisa: Rp ${(total-paid).toLocaleString()}`;
+}
 
-<script type="module" src="js/invoice.js"></script>
-</body>
-</html>
+window.addItem=async()=>{
+  const item=prompt("Item");
+  const qty=+prompt("Qty");
+  const price=+prompt("Harga");
+  await addDoc(collection(ref,"purchases"),{
+    item,qty,price,total:qty*price,date:new Date()
+  });
+}
+
+window.addPayment=async()=>{
+  const amt=+prompt("Bayar");
+  await addDoc(collection(ref,"payments"),{
+    amount:amt,date:new Date()
+  });
+}
+
+window.deleteItem=async(id2)=>{
+  if(confirm("Hapus?")) await deleteDoc(doc(ref,"purchases",id2));
+}
+
+window.editItem=async(id2,qty,price,item)=>{
+  const nItem=prompt("Item",item);
+  const nQty=+prompt("Qty",qty);
+  const nPrice=+prompt("Harga",price);
+  await updateDoc(doc(ref,"purchases",id2),{
+    item:nItem,qty:nQty,price:nPrice,total:nQty*nPrice
+  });
+}
+
+window.sendWhatsApp=async()=>{
+  const canvas = await html2canvas(document.getElementById("invoiceArea"));
+  const img = canvas.toDataURL("image/png");
+  const wa = custWa.innerText.replace(/^0/,"62");
+  const link = `https://wa.me/${wa}?text=Invoice%20Anda%0A${location.href}`;
+  window.open(link,"_blank");
+}
