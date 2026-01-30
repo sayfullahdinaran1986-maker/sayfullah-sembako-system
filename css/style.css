@@ -3,9 +3,10 @@ header{background:#111;color:white;padding:16px;text-align:center}
 .container{max-width:700px;margin:auto;padding:15px}
 
 .card{background:white;padding:15px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.input-card{gap:10px}
 .card:hover{background:#f8f8f8}
 
-input{width:48%;padding:10px;border-radius:8px;border:1px solid #ddd}
+input{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd}
 button{padding:10px;border-radius:8px;border:none;background:#111;color:white;font-weight:600}
 
 .card .aksi{display:flex;gap:8px}
@@ -26,7 +27,7 @@ th,td{padding:8px;font-size:13px;border-bottom:1px solid #ddd;text-align:center}
 #invoice{max-width:900px;margin:auto;background:white;padding:16px;border-radius:10px}
 
 @media print{
-  .actions{display:none}
+  .actions,.aksi,button{display:none!important}
   body{background:white}
   #invoice{max-width:100%;padding:0}
 }
