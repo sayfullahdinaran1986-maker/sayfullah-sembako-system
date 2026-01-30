@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Invoice</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+<h2>Sayfullah</h2>
+<p>Jl. Murung Selong RT 12 No. 04 Sungai Lulut Banjarmasin Timur<br>WA 082152412854</p>
+
+<h3 id="custName"></h3>
+<p id="custWa"></p>
+
+<table>
+<thead>
+<tr>
+<th>No</th><th>Tanggal</th><th>Item</th><th>Qty</th><th>Harga</th><th>Jumlah</th><th>Aksi</th>
+</tr>
+</thead>
+<tbody id="items"></tbody>
+</table>
+
+<h3 id="summary"></h3>
+
+<h4>Pembayaran</h4>
+<div id="payments"></div>
+
+<button onclick="history.back()">Kembali</button>
+<button onclick="addItem()">Tambah Item</button>
+<button onclick="addPayment()">Bayar</button>
+<button onclick="sendWA()">Kirim WhatsApp (PNG)</button>
+
+<script type="module" src="js/invoice.js"></script>
+</body>
+</html>
