@@ -1,87 +1,44 @@
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Invoice</title>
+<link rel="stylesheet" href="css/invoice.css">
+</head>
+<body>
 
-.invoice {
-  max-width: 900px;
-  margin: auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.08);
-}
+<div class="invoice" id="invoice">
+  <header>
+    <h1>Sayfullah</h1>
+    <div>Jl. Murung Selong RT 12 No. 04 Sungai Lulut, Banjarmasin Timur</div>
+    <div>WA: 082152412854</div>
+  </header>
 
-header {
-  background: linear-gradient(135deg,#000,#222);
-  color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-}
+  <h3 id="custName"></h3>
+  <div id="custWa"></div>
 
-h1 {
-  margin: 0;
-  font-size: 28px;
-}
+  <table>
+    <thead>
+      <tr>
+        <th>No</th><th>Tanggal</th><th>Item</th><th>Qty</th><th>Harga</th><th>Jumlah</th><th class="no-print">Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="items"></tbody>
+  </table>
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
+  <div class="total" id="summary"></div>
 
-th {
-  background: #111;
-  color: white;
-  padding: 10px;
-}
+  <h3>Pembayaran</h3>
+  <div id="payments"></div>
 
-td {
-  border-bottom: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-}
+  <div class="actions no-print">
+    <button onclick="addItem()">Tambah Item</button>
+    <button onclick="addPayment()">Bayar</button>
+    <button onclick="sendWA()">Kirim WhatsApp (PNG)</button>
+    <button onclick="window.print()">PDF</button>
+  </div>
+</div>
 
-.total {
-  margin-top: 20px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-button {
-  background: #111;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-button.danger {
-  background: #c0392b;
-}
-
-.actions {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.payment-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #ddd;
-}
-
-.no-print { }
-
-@media print {
-  .no-print {
-    display: none !important;
-  }
-}
+<script type="module" src="js/invoice.js"></script>
+</body>
+</html>
