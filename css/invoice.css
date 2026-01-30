@@ -133,3 +133,19 @@ tr:hover {
     background: white;
   }
 }
+
+.invoice {
+  max-width: 900px;
+  margin-left: 2cm;
+  margin-right: 2cm;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+@media print {
+  .invoice {
+    margin-left: 2cm;
+    margin-right: 2cm;
+  }
+}
+
