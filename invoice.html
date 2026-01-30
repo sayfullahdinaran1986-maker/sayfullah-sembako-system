@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Invoice</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/invoice.css">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
+<div class="invoice-container">  
 <h2>Sayfullah</h2>
 <p>Jl. Murung Selong RT 12 No. 04 Sungai Lulut Banjarmasin Timur<br>WA 082152412854</p>
 
@@ -32,6 +33,8 @@
 <button onclick="addItem()">Tambah Item</button>
 <button onclick="addPayment()">Bayar</button>
 <button onclick="sendWA()">Kirim WhatsApp (PNG)</button>
+
+</div>
 
 <script type="module" src="js/invoice.js"></script>
 </body>
