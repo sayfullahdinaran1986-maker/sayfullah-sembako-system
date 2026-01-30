@@ -1,33 +1,62 @@
-body{margin:0;font-family:system-ui;background:#f4f4f4}
-header{background:#111;color:white;padding:16px;text-align:center}
-.container{max-width:700px;margin:auto;padding:15px}
+.invoice-wrapper{
+  display:flex;
+  justify-content:center;
+  padding:30px;
+}
+.invoice{
+  width:900px;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+}
 
-.card{background:white;padding:15px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.input-card{gap:10px}
-.card:hover{background:#f8f8f8}
+.header{
+  background:#111;
+  color:#fff;
+  padding:20px;
+  border-radius:10px;
+  text-align:center;
+}
 
-input{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd}
-button{padding:10px;border-radius:8px;border:none;background:#111;color:white;font-weight:600}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th,td{
+  border-bottom:1px solid #ddd;
+  padding:8px;
+  text-align:center;
+}
+th{
+  background:#f3f3f3;
+}
 
-.card .aksi{display:flex;gap:8px}
-.card .aksi button{width:32px;height:32px;padding:0}
+.bottom-bar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#111;
+  padding:10px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
+.bottom-bar button{
+  background:#000;
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:8px;
+}
 
-table{width:100%;border-collapse:collapse;margin-top:15px;background:white}
-th{background:#f0f0f0}
-th,td{padding:8px;font-size:13px;border-bottom:1px solid #ddd;text-align:center}
-
-.aksi{display:flex;justify-content:center;gap:8px}
-.aksi button{width:32px;height:32px;padding:0}
-
-.payrow{display:flex;justify-content:space-between;background:white;padding:8px;border-bottom:1px solid #eee}
-
-.actions{position:fixed;bottom:0;width:100%;display:flex;background:white;border-top:1px solid #ccc}
-.actions button{flex:1}
-
-#invoice{max-width:900px;margin:auto;background:white;padding:16px;border-radius:10px}
-
+.no-print{}
 @media print{
-  .actions,.aksi,button{display:none!important}
-  body{background:white}
-  #invoice{max-width:100%;padding:0}
+  .no-print{
+    display:none !important;
+  }
+  body{
+    background:#fff;
+  }
 }
