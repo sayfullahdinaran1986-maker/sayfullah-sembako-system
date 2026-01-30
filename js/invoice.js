@@ -1,58 +1,127 @@
 import { db } from "./firebase.js";
-import { doc,getDoc,collection,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import {
+  doc,
+  getDoc,
+  collection,
+  addDoc,
+  deleteDoc,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const id=new URLSearchParams(location.search).get("id");
-const ref=doc(db,"customers",id);
-const snap=await getDoc(ref);
-custName.innerText=snap.data().name;
-custWa.innerText=snap.data().wa;
+const id = new URLSearchParams(location.search).get("id");
+const ref = doc(db, "customers", id);
 
-let total=0,paid=0;
+// Load customer
+const snap = await getDoc(ref);
+custName.innerText = snap.data().name;
+custWa.innerText = snap.data().wa;
 
-onSnapshot(collection(ref,"purchases"),s=>{
- items.innerHTML=""; total=0;
- let i=1;
- s.forEach(d=>{
-  const x=d.data();
-  total+=x.total;
-  items.innerHTML+=`<tr>
-   <td>${i++}</td><td>${x.date}</td><td>${x.item}</td>
-   <td>${x.qty}</td><td>${x.price}</td><td>${x.total}</td>
-   <td><button onclick="del('${d.id}')">X</button></td>
-  </tr>`;
- });
- render();
+let total = 0;
+let paid = 0;
+
+// ================== PURCHASES ==================
+onSnapshot(collection(ref, "purchases"), (s) => {
+  items.innerHTML = "";
+  total = 0;
+  let i = 1;
+
+  s.forEach((d) => {
+    const x = d.data();
+    total += x.total;
+
+    let date = x.date;
+    if (x.date?.seconds) {
+      date = new Date(x.date.seconds * 1000).toLocaleDateString();
+    }
+
+    items.innerHTML += `
+      <tr>
+        <td>${i++}</td>
+        <td>${date}</td>
+        <td>${x.item}</td>
+        <td>${x.qty}</td>
+        <td>${x.price.toLocaleString()}</td>
+        <td>${x.total.toLocaleString()}</td>
+        <td>
+          <button onclick="deleteItem('${d.id}')">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  render();
 });
 
-onSnapshot(collection(ref,"payments"),s=>{
- payments.innerHTML=""; paid=0;
- s.forEach(d=>{
-  const x=d.data();
-  paid+=x.amount;
-  payments.innerHTML+=`${x.date} - ${x.amount}<br>`;
- });
- render();
+// ================== PAYMENTS ==================
+onSnapshot(collection(ref, "payments"), (s) => {
+  payments.innerHTML = "";
+  paid = 0;
+
+  s.forEach((d) => {
+    const x = d.data();
+    paid += x.amount;
+
+    let date = x.date;
+    if (x.date?.seconds) {
+      date = new Date(x.date.seconds * 1000).toLocaleDateString();
+    }
+
+    payments.innerHTML += `
+      ${date} - Rp ${x.amount.toLocaleString()}
+      <button onclick="deletePayment('${d.id}')">❌</button><br>
+    `;
+  });
+
+  render();
 });
 
-function render(){
- summary.innerText=`Total ${total} | Sisa ${total-paid}`;
+// ================== RENDER ==================
+function render() {
+  summary.innerText = `Total: Rp ${total.toLocaleString()} | Sisa: Rp ${(total - paid).toLocaleString()}`;
 }
 
-window.addItem=async()=>{
- const item=prompt("Item"),qty=+prompt("Qty"),price=+prompt("Harga");
- await addDoc(collection(ref,"purchases"),{
-  item,qty,price,total:qty*price,date:new Date().toLocaleDateString()
- });
-}
+// ================== ADD ITEM ==================
+window.addItem = async () => {
+  const item = prompt("Nama Item");
+  const qty = Number(prompt("Qty"));
+  const price = Number(prompt("Harga"));
 
-window.addPayment=async()=>{
- const amt=+prompt("Bayar");
- await addDoc(collection(ref,"payments"),{
-  amount:amt,date:new Date().toLocaleDateString()
- });
-}
+  if (!item || !qty || !price) return alert("Data tidak lengkap");
 
-window.sendWA=()=>{
- const wa=custWa.innerText.replace(/^0/,"62");
- window.open(`https://wa.me/${wa}?text=Invoice%20Sayfullah`,"_blank");
-}
+  await addDoc(collection(ref, "purchases"), {
+    item,
+    qty,
+    price,
+    total: qty * price,
+    date: new Date()
+  });
+};
+
+// ================== ADD PAYMENT ==================
+window.addPayment = async () => {
+  const amt = Number(prompt("Nominal bayar"));
+  if (!amt) return;
+
+  await addDoc(collection(ref, "payments"), {
+    amount: amt,
+    date: new Date()
+  });
+};
+
+// ================== DELETE ==================
+window.deleteItem = async (id) => {
+  if (!confirm("Hapus item ini?")) return;
+  await deleteDoc(doc(ref, "purchases", id));
+};
+
+window.deletePayment = async (id) => {
+  if (!confirm("Hapus pembayaran ini?")) return;
+  await deleteDoc(doc(ref, "payments", id));
+};
+
+// ================== WHATSAPP ==================
+window.sendWA = () => {
+  const wa = custWa.innerText.replace(/^0/, "62");
+  const msg = encodeURIComponent(`Halo ${custName.innerText}, ini invoice dari Sayfullah. Total Rp ${total.toLocaleString()}, Sisa Rp ${(total-paid).toLocaleString()}`);
+  window.open(`https://wa.me/${wa}?text=${msg}`, "_blank");
+};
