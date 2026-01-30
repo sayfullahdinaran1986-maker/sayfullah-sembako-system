@@ -9,19 +9,19 @@
 <body>
 
 <header>
-<h1>Sayfullah</h1>
-<p>Sistem Penjualan & Piutang</p>
-<button onclick="location.href='rekap.html'">📊 Rekap Hutang</button>
+  <h1>Sayfullah</h1>
+  <p>Sistem Penjualan & Piutang</p>
+  <button onclick="location.href='rekap.html'">📊 Rekap Hutang</button>
 </header>
 
 <div class="container">
-<div class="card">
-<input id="name" placeholder="Nama Pelanggan">
-<input id="wa" placeholder="WhatsApp">
-<button onclick="addCustomer()">Tambah Pelanggan</button>
-</div>
+  <div class="card input-card">
+    <input id="name" placeholder="Nama Pelanggan">
+    <input id="wa" placeholder="WhatsApp">
+    <button onclick="addCustomer()">Tambah Pelanggan</button>
+  </div>
 
-<div id="list"></div>
+  <div id="list"></div>
 </div>
 
 <script type="module" src="js/firebase.js"></script>
